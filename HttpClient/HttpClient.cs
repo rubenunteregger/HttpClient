@@ -37,6 +37,7 @@
 
     public void SendGetRequest(RequestConfig requestConfig)
     {
+      string headers = string.Empty;
       this.requestConfig = requestConfig;
       this.tcpClient = new TcpClient(this.requestConfig.Host, this.requestConfig.Port);
       tcpClient.NoDelay = true;
@@ -53,7 +54,8 @@
       }
 
       this.streamHandler = new StreamHandler(theStream, this.requestConfig.Host, this.requestConfig.Port, this.requestConfig.Path);
-      string request = string.Format("GET {0} HTTP/1.1\r\nHost: {1}\r\n\r\n", this.requestConfig.Path, this.requestConfig.Host);
+      string Headers = string.Join(Environment.NewLine, this.requestConfig.CustomRequestHeaders);
+      string request = string.Format("GET {0} HTTP/1.1\r\n{1}\r\n\r\n", this.requestConfig.Path, Headers);
       this.streamHandler.SendRequestToServer(request);
     }
 
@@ -63,8 +65,8 @@
       byte[] buffer = new byte[2048];
 
       // Fetch server response line
-      this.responseMetaData.ServerResponseStatus = this.streamHandler.ReadLine(false);
-      if (string.IsNullOrEmpty(this.responseMetaData.ServerResponseStatus) || this.responseMetaData.ServerResponseStatus.ToLower().StartsWith("http/1.") == false)
+      this.responseMetaData.ServerResponseCode = this.streamHandler.ReadLine(false);
+      if (string.IsNullOrEmpty(this.responseMetaData.ServerResponseCode) || this.responseMetaData.ServerResponseCode.ToLower().StartsWith("http/1.") == false)
       {
         throw new Exception("The server status line is invalid");
       }

@@ -14,7 +14,7 @@
 
     public ContentTransferType ContentTransferType { get; set; }
 
-    public string ServerResponseStatus { get; set; }
+    public string ServerResponseCode { get; set; }
 
     public Dictionary<string, List<string>> Headers { get; set; }
 
